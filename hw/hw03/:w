@@ -1,0 +1,178 @@
+// Nicholas Smith
+// ANY SOURCES OR COLLABORATION YOU USED HERE
+
+import java.util.NoSuchElementException;
+
+public class LinkedList<T> implements List<T> {
+  
+  //Private fields within the linked list
+  private Node<T> head;
+  private int size = 0; 
+  
+  /**
+   *
+   * Private Node class that consists of generics.
+   */
+  private class Node<T> {
+    T data;
+    Node<T> next;
+
+    //Node constructor.
+    private Node(T data, Node<T> next) {
+      this.data = data;
+      this.next = next;
+    }
+  }
+
+  /**
+   * Main method
+   */
+  public static void main(String[] args){
+    LinkedList<Integer> list = new LinkedList<>();
+    list.add(0, 0);
+    list.add(1, 1);
+    list.add(2, 1);
+    list.add(3, 4);
+    list.remove(1);
+    System.out.println(list.get(0));
+    System.out.println(list.get(1));
+    System.out.println(list.get(2));
+    System.out.println(list.get(3));
+    list.removeAll(1);
+
+  }  
+
+  public void printAll(Node<T> cur){
+    if(curr == null)
+      return;
+    System.out.println(cur.data)
+    printAll(cur.next);
+  
+  }
+  @Override
+  public T get(int index) throws IndexOutOfBoundsException {
+    return get(index, head);
+  }
+
+  public T get(int index, Node<T> cur){
+    if(index == 0)
+      return cur.data;
+    //Go to the next spot. 
+    return get(index - 1, cur.next);
+  }
+
+  @Override
+  public void set(int index, T data) throws IndexOutOfBoundsException {
+    set(index, data, head);
+  }
+
+  public void set(int index, T data, Node<T> cur){
+    if(index == 0)
+    {
+      cur.data = data;
+      return;
+    }
+    //Go to the next indexed spot in the LL. 
+    set(index - 1, data, cur.next);  
+  } 
+
+  @Override
+  public void add(int index, T data) throws IndexOutOfBoundsException {
+    //Go to the indexed value prior to what we want. 
+    if(head == null)
+    {
+      head = new Node<>(data, null); 
+      return;
+    }
+    add(index -1, data, head);
+    size++;
+  }
+
+  public void add(int index, T data, Node<T> cur){
+   //Insert to front. 
+   if(index == -1)
+   {
+     Node<T> newNode = new Node<>(data, cur); 
+     newNode.next = cur;
+     head = newNode; 
+     return;
+   }
+   //Insert to middle. 
+   else if(index == 0)
+   {
+     Node<T> newNode = new Node<>(data, cur); 
+     newNode.next = cur.next;
+     cur.next = newNode;
+     return;
+   }
+   add(index - 1, data, cur.next);
+  }
+
+  @Override
+  public void remove(int index) throws IndexOutOfBoundsException {
+   if(index < 0 || index > size)
+     throw new IndexOutOfBoundsException("Index!");
+
+   if(head == null)
+     throw new IndexOutOfBoundsException("Empty list!");
+
+   remove(index, head);
+   size--;
+  }
+
+  public void remove(int index, Node<T> cur){
+    if(index == 0)
+    {
+      cur = cur.next;
+      return; 
+    }
+    remove(index - 1, cur.next);
+  } 
+
+  @Override
+  public int size() {
+    return size;
+  }
+
+  /*private int size(Node<T> cur){
+    if(cur == null)
+      return 0;
+    return 1+ size(cur.next);
+  }*/
+
+  /*public void traverse() {
+    traverse(head);
+  }
+
+  public void traverse(Node<T> cur) {
+  }*/
+
+
+  /** Removes ALL elements matching the given one using .equals().
+   *
+   * @param element The element that should be removed
+   */
+  public void removeAll(T data) {
+   removeAll(head, data, 0); 
+  }
+
+  public void removeAll(Node<T> cur, T data, int index){
+    if(cur == null)
+      return;
+    if(cur.data.equals(data))
+    {
+      remove(index); 
+      index--; 
+      size--;
+    }
+    removeAll(cur.next, data, index + 1);  
+  } 
+
+  /** Gets the 2nd-to-last element.
+   *
+   * @return The data in the second-to-last node in the list (if any)
+   * @throws NoSuchElementException if the list size is less than 2
+   */
+  //public T penultimate() throws NoSuchElementException {
+  //}
+}

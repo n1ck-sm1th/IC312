@@ -89,7 +89,7 @@ public class test<T>{
    */
    public int size() {
     return size(head);   //If we are at the end of the list add to back.
-   }
+  }
 
   /**
    *
@@ -159,16 +159,42 @@ public class test<T>{
     }
     remove(traverse(head, index -1 ));
   }
-  
+
   /**
-   *
-   * Once at the node before our indexed node we traverse to the node after
-   * next, set it equal to next.
-   */ 
+  *
+  * Once at the node before our indexed node we traverse to the node after
+  * next, set it equal to next.
+  */ 
   public void remove(Node<T> cur) {
-    // The next node is set to skip over the other node. 
     cur.next = cur.next.next;
   }
+
+
+  /** Removes ALL elements matching the given one using .equals().
+  *
+  * @param element The element that should be removed
+  */
+  public void removeAll(T data){
+    removeAll(head, data, 0);
+  }
+
+  public void removeAll(Node<T> head, T data, int index){
+    if(head == null)
+      return;
+    if(head.data.equals(data))
+    {
+      System.out.println(head.data);
+      remove(index); 
+    }
+    removeAll(head.next, data, index + 1);  
+  }
+
+  /** Gets the 2nd-to-last element.
+  *
+  * @return The data in the second-to-last node in the list (if any)
+  * @throws NoSuchElementException if the list size is less than 2
+  */
+  //public T penultimate() throws NoSuchElementException;
 
  
   //Testing main. 
@@ -177,12 +203,16 @@ public class test<T>{
     list.add(0, 1000);
     list.add(1, 2000);
     list.add(2, 3000);
+    list.add(3, 3000);
     System.out.println(list.get(2));
-    list.set(2, 3005);
+    //list.set(2, 3005);
     System.out.println(list.get(2));
-    list.remove(1);
+    list.removeAll(3000);
+    System.out.println("BREAK");
     System.out.println(list.get(0));
     System.out.println(list.get(1));
+    System.out.println(list.get(2));
+    System.out.println(list.get(3));
     return;
   }
 }

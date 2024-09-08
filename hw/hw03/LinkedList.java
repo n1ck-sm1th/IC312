@@ -4,6 +4,11 @@
 import java.util.NoSuchElementException;
 
 public class LinkedList<T> implements List<T> {
+  
+  //Private fields within the linked list
+  private Node<T> head;
+  private int size = 0; 
+  
   /**
    *
    * Private Node class that consists of generics.
@@ -12,7 +17,8 @@ public class LinkedList<T> implements List<T> {
     T data;
     Node<T> next;
 
-    Node(T data, Node<T> next) {
+    //Node constructor.
+    private Node(T data, Node<T> next) {
       this.data = data;
       this.next = next;
     }
@@ -23,110 +29,173 @@ public class LinkedList<T> implements List<T> {
    */
   public static void main(String[] args){
     LinkedList<Integer> list = new LinkedList<>();
+    list.add(0, 0);
+    list.remove(0);
+    //list.printAll();  
+    System.out.println("BREAK");
     System.out.println(list.size());
+    System.out.println(list.penultimate());
   }  
 
-  
-  private Node<Integer> head;  
+  /**
+   *
+   * Tester print all method
+   */
+  public void printAll(){
+    printAll(head);
+  } 
+
+  //Recursive printall method. 
+  public void printAll(Node<T> cur){
+    if(cur == null)
+      return;
+    System.out.println(cur.data);
+    printAll(cur.next);
+    return;
+  }
 
   @Override
+  /**
+   *
+   * Get method
+   */
   public T get(int index) throws IndexOutOfBoundsException {
+    if(index < 0 || index > size() - 1)
+      throw new IndexOutOfBoundsException("Index at GET");
     return get(index, head);
   }
 
-  public T get(int index, Node head){
-    //Use traverse to get to the place, then index it.
-    if(index < 0 || index > size()-1)  //Out of bounds testing.
-      throw new IndexOutOfBoundsException("Index!");
-    return elements[index]; //Goes into the elements array and retrives index. 
+  //Recursive get method.
+  public T get(int index, Node<T> cur){
+    if(index == 0)
+      return cur.data;
+    return get(index - 1, cur.next);
   }
 
   @Override
+  /**
+   *
+   * Set method
+   */
   public void set(int index, T data) throws IndexOutOfBoundsException {
-    return set(index, head);
+    if(index < 0 || index > size() - 1)
+      throw new IndexOutOfBoundsException("Index at SET");
+    set(index, data, head);
   }
 
-  public void set(int index, Node head){
-    if(index < 0 || index > size()-1)
-      throw new IndexOutOfBoundsException("Index!");
-     elements[index] = data;
-  } 
-
-  @Override
-  public void add(int index, T data) throws IndexOutOfBoundsException {
-   add(index, head);
-  }
-
-  public void add(int index, Node head){
-    if(index < 0 || index > size())
-      throw new IndexOutOfBoundsException("Index!"); //Ensuring we are in bounds. 
-    if (size() == capacity)
-      throw new IllegalStateException("Full"); //Size returns how many elements are in the list.
-    if(elements[index] == null)
-      elements[index] = data; //Automatic insertion.
-    else 
+  //Recursive set method.
+  public void set(int index, T data, Node<T> cur){
+    if(index == 0)
     {
-      //Make recursive call.
-      for(int a = size(); a > index ; a--)
-      {    
-        elements[a] = elements[a-1];
-      }
-        elements[index] = data;
-    } 
-  }
-
-  @Override
-  public void remove(int index) throws IndexOutOfBoundsException {
-   remove(index, head);
-  }
-
-  public void remove(int index, Node<T> Head){
-    if(index < 0 || index > size())
-      throw new IndexOutOfBoundsException("Index!");
-    if  
-    else //Shifting method.  
-    {  
-      //Make recursive call
-      remove(index-1, 
-      for(int a = index; a < size() - 1 ; a++)
-      {    
-        elements[a] = elements[a+1];
-      }
-        elements[size()-1] = null; //Make the end part null to avoid duplicates. 
-    } 
-  } 
-
-  @Override
-  public int size() {
-    size(head);//Helper method for size. 
-    return 0;
-  }
-
-  private int size(Node<T> cur){
-    if(cur == null)
-      return 0;
-    return 1+ size(cur.next);
-  } 
-
-  public void traverse() {
-    traverse(head);
-  }
-
-  public void traverse(Node<T> cur) {
-    if (cur == null)
+      cur.data = data;
       return;
-    //... perform some action on cur
-    traverse(cur.next);
+    }
+    set(index - 1, data, cur.next);  
+  } 
+
+  @Override
+  /**
+   *
+   * Add method
+   */
+  public void add(int index, T data) throws IndexOutOfBoundsException {
+    //Go to the indexed value prior to what we want. 
+    if(index < 0 || index > size() + 1)
+     throw new IndexOutOfBoundsException("Index at ADD");
+    if(head == null)
+    {
+      head = new Node<>(data, null); 
+      return;
+    }
+    add(index -1, data, head);
   }
 
+  //Recurisve add method.
+  public void add(int index, T data, Node<T> cur){
+    //Insert to front. 
+    if(index == -1)
+    {
+      Node<T> newNode = new Node<>(data, cur); 
+      newNode.next = cur;
+      head = newNode;
+      return;
+    }
+    //Insert to middle. 
+    else if(index == 0)
+    {
+      Node<T> newNode = new Node<>(data, cur); 
+      newNode.next = cur.next;
+      cur.next = newNode;
+      return;
+    }
+    add(index - 1, data, cur.next);
+  }
+
+  @Override
+  /**
+   *
+   * Remove method
+   */
+  public void remove(int index) throws IndexOutOfBoundsException {
+    if(index < 0 || index > size() - 1)
+      throw new IndexOutOfBoundsException("Index at REMOVE");
+
+    if(head == null)
+      throw new IndexOutOfBoundsException("Empty list!");
+
+    remove(index - 1, head);
+  }
+
+  //Recursive remove method. 
+  public void remove(int index, Node<T> cur){
+    //Remove from front.
+    if(index == -1)
+    {
+      if(cur.next == null)
+        head = null;
+      else 
+        head = cur.next;
+      return; 
+    }
+    //Remove from middle.
+    if(index == 0)
+    {
+      cur.next = cur.next.next;
+      return;
+    }
+    remove(index - 1, cur.next);
+  } 
+
+  @Override //Just use a counter within the linked list that takes care of size.
+  public int size() {
+    return size(head);
+  }
+
+  public int size(Node<T> cur){
+    if(cur == null)
+      return 0; 
+    return 1 + size(cur.next);
+  } 
 
   /** Removes ALL elements matching the given one using .equals().
    *
-   * @param element The element that should be removed
+   * @param data The element that should be removed
    */
-  public void removeAll(T element) {
-    throw new UnsupportedOperationException(); // TODO erase this and get it working
+  public void removeAll(T data) {
+    removeAll(head, data, 0); 
   }
+
+  //Recursive remove all method. 
+  public void removeAll(Node<T> cur, T data, int index){
+    if(cur == null)
+      return;
+    if(cur.data.equals(data))
+    {
+      remove(index); 
+      index--; 
+    }
+    removeAll(cur.next, data, index + 1);  
+  } 
 
   /** Gets the 2nd-to-last element.
    *
@@ -134,6 +203,20 @@ public class LinkedList<T> implements List<T> {
    * @throws NoSuchElementException if the list size is less than 2
    */
   public T penultimate() throws NoSuchElementException {
-    throw new UnsupportedOperationException(); // TODO erase this and get it working
+    if(size() < 2)
+      throw new NoSuchElementException("List is smaller than 2!");
+    return penultimate(size() - 1, head);
   }
+
+  //Recursive penultimate method.
+  public T penultimate(int index, Node<T> cur){
+    if(index == 1)
+      return cur.data;
+    return penultimate(index - 1, cur.next);
+  } 
+
+  /** Iterates through the list.
+   *
+   */
+
 }
